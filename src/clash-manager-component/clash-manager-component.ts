@@ -3,6 +3,7 @@ import {ClashCircleComponent} from '../clash-circle-component/clash-circle-compo
 import {ClashKey, ClashModel} from '../model/model';
 import {MatDialog} from '@angular/material/dialog';
 import {ClashCreateComponent} from '../clash-create-component/clash-create-component';
+import {SoundService} from '../sound-service';
 
 interface SpawnPoint {
   x: number;
@@ -37,7 +38,7 @@ export class ClashManagerComponent {
   private cleanUp: boolean = false;
   private cleanUpDelay: number = 2000;
 
-  public constructor() {}
+  public constructor(private soundService: SoundService) {}
 
   @HostListener('keydown.space', ['$event'])
   protected start(event: Event) {
@@ -83,6 +84,7 @@ export class ClashManagerComponent {
     const circle = this.circles.find(c => !c.resolved);
     if (!circle) return;
 
+    this.soundService.play('clash');
     if (e.key.toUpperCase() !== circle.letter) {
       circle.resolve({ text: 'Bad', type: 'fail-red'});
       this.cleanup(circle)

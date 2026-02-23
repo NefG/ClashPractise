@@ -1,3 +1,11 @@
+.floating-tooltip {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  color: white;
+  font-size: 18px;
+}
+
 .floating-toolbar {
   position: fixed;
   top: 16px;
