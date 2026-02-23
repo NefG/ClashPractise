@@ -1,0 +1,17 @@
+<div
+  class="clash-circle"
+  [style.left.px]="x"
+  [style.top.px]="y"
+  [style.--progress]="progress"
+  [ngClass]="{
+       'success-perfect': resultClass === 'success-perfect',
+       'success-good': resultClass === 'success-good',
+       'fail-red': resultClass === 'fail-red'
+     }">
+  <span>{{ letter }}</span>
+  @if (result) {
+    <div class="label">
+      {{ result }}
+    </div>
+  }
+</div>
