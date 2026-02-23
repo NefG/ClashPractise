@@ -1,6 +1,4 @@
-import {Component, signal, ViewChild} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {ClashCircleComponent} from '../clash-circle-component/clash-circle-component';
+import {Component, signal, ViewChild, ViewContainerRef} from '@angular/core';
 import {ClashManagerComponent} from '../clash-manager-component/clash-manager-component';
 import {MatIcon} from '@angular/material/icon';
 import {MatFormField, MatLabel} from '@angular/material/input';
@@ -8,21 +6,27 @@ import {MatOption, MatSelect} from '@angular/material/select';
 import {FormsModule} from '@angular/forms';
 import {ClashModel} from '../model/model';
 import {MatMiniFabButton} from '@angular/material/button';
+import {ClashCreateComponent, ClashDialogResult} from '../clash-create-component/clash-create-component';
+import {MatDialog} from '@angular/material/dialog';
+import {BlurOnClick} from '../blur-on-click';
 
 @Component({
   selector: 'app-root',
-  imports: [ClashManagerComponent, MatIcon, MatFormField, MatSelect, MatOption, MatLabel, FormsModule, MatMiniFabButton],
+  imports: [ClashManagerComponent, MatIcon, MatFormField, MatSelect, MatOption, MatLabel, FormsModule, MatMiniFabButton, BlurOnClick],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   protected readonly title = signal('TypingPractise');
 
+  @ViewChild('clashManager', { read: ViewContainerRef, static: true })
+  public clashManager!: ViewContainerRef;
+
   private readonly clashListKey = 'clash-list';
-  protected clashSelect: ClashModel = {name: 'Temp', sequence: []};
+  protected clashSelect: ClashModel = {name: 'Temp', speed: 1000, sequence: []};
   protected clashSelectList: ClashModel[] = [];
 
-  public constructor() {
+  public constructor(private dialog: MatDialog) {
     this.loadClashList();
   }
 
@@ -33,6 +37,7 @@ export class App {
 
   public saveClashList() {
     localStorage.setItem(this.clashListKey, JSON.stringify(this.clashSelectList));
+    console.log(this.clashSelectList);
   }
 
   public loadClashList() {
@@ -43,6 +48,7 @@ export class App {
       this.saveNewClash({
         name: 'Test clash',
         keyGroup: [['Q', 'W', 'E', 'R']],
+        speed: 1000,
         sequence: [
           { type: 'random', delay: 200, positionX: 100, positionY: 150 },
           { type: 'random', delay: 500, positionX: 250, positionY: 80 },
@@ -64,5 +70,26 @@ export class App {
 
   public clear() {
     localStorage.clear();
+  }
+
+  public clashManagement() {
+    const dialogRef = this.dialog.open(ClashCreateComponent, {
+      width: '800px',
+      maxWidth: '90vw',
+      height: '60%',
+      data: { clashList: this.clashSelectList } // Passing data TO the dialog
+    });
+
+    // Listen for the result AFTER the dialog closes
+    dialogRef.afterClosed().subscribe({ next: (result: ClashDialogResult) => {
+      console.log('The dialog was closed. Result:', result);
+      if (result.result) {
+        this.clashSelectList = result.list;
+        this.saveClashList()
+      }
+    },
+    complete: () => {
+        this.clashManager.element.nativeElement.focus();
+    }});
   }
 }

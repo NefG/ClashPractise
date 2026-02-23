@@ -1,0 +1,99 @@
+<mat-dialog-content>
+  <div style="display: flex; gap: 32px; justify-content: space-around;">
+    <mat-form-field>
+      <mat-label>Clash select</mat-label>
+      <mat-select [(ngModel)]="clashSelected" (selectionChange)="onChange($event.value)">
+        @for (clash of clashList; track clash.name) {
+          <mat-option [value]="clash">{{clash.name}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <button mat-flat-button (click)="deleteCurrent()">Delete</button>
+    <button mat-flat-button (click)="swapToJSON()" [disabled]="fromJSON">Enter JSON</button>
+    <button mat-flat-button [cdkCopyToClipboard]="clashSelected | json">Copy Clash JSON</button>
+  </div>
+
+  <div style="width: 100%; height: 64px;"> </div>
+
+  @if (fromJSON) {
+    <div>
+      <mat-form-field style="width: 100%">
+        <mat-label>Enter JSON here</mat-label>
+        <textarea matInput [(ngModel)]="jsonField" cdkAutosizeMinRows="3"  cdkAutosizeMaxRows="8"></textarea>
+      </mat-form-field>
+    </div>
+    <div style="display: flex; gap: 32px; justify-content: space-around;">
+      <button mat-flat-button (click)="cancelFromJson()">Cancel</button>
+      <button mat-flat-button color="primary" (click)="createFromJson()">Add to list</button>
+    </div>
+  } @else {
+    <div style="display: flex; gap: 32px; justify-content: space-around;">
+      <mat-form-field style="flex: 1;">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" [(ngModel)]="clashForm.name">
+      </mat-form-field>
+      <mat-form-field style="flex: 1;">
+        <mat-label>Speed</mat-label>
+        <input matInput placeholder="1000" type="number" step="100" [(ngModel)]="clashForm.speed">
+      </mat-form-field>
+      <mat-form-field style="flex: 1;">
+        <mat-label>Clash select</mat-label>
+        <mat-select [(ngModel)]="clashForm.keyGroup" multiple>
+          @for (keySet of keySetList; track keySet) {
+            <mat-option [value]="keySet">{{ keySet | join }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+
+    @for (clashKey of clashForm.sequence; track clashKey; let f = $index) {
+      <div style="margin: 8px 16px; display: flex; align-items: center; justify-content: space-around; gap: 8px;">
+        <mat-form-field>
+          <mat-label>Type select</mat-label>
+          <mat-select [(ngModel)]="clashKey.type">
+            <mat-option value="static">Static</mat-option>
+            <mat-option value="random">Random</mat-option>
+          </mat-select>
+        </mat-form-field>
+        @if (clashKey.type == 'static') {
+          <mat-form-field>
+            <mat-label>Key</mat-label>
+            <mat-select [(ngModel)]="clashKey.key">
+              @for (keySet of keySetList[0]; track keySet) {
+                <mat-option [value]="keySet">{{ keySet }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        } @else {
+          <mat-form-field>
+            <mat-label>Random from</mat-label>
+            <mat-select [(ngModel)]="clashKey.keyGroupIndex">
+              @for (keySet of clashForm.keyGroup; track keySet; let i = $index) {
+                <mat-option [value]="i">{{ keySet | join }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+        <mat-form-field style="width: 100px;">
+          <mat-label>X</mat-label>
+          <input matInput placeholder="0" type="number" step="50" [(ngModel)]="clashKey.positionX">
+        </mat-form-field>
+        <mat-form-field style="width: 100px;">
+          <mat-label>Y</mat-label>
+          <input matInput placeholder="0" type="number" step="50" [(ngModel)]="clashKey.positionY">
+        </mat-form-field>
+        <mat-form-field style="width: 100px;">
+          <mat-label>Delay</mat-label>
+          <input matInput placeholder="800" type="number" step="100" [(ngModel)]="clashKey.delay">
+        </mat-form-field>
+        <button mat-flat-button (click)="clashForm.removeSequence(f)">Remove</button>
+      </div>
+    }
+    <button mat-flat-button (click)="clashForm.addSequence()">Add new</button>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button (click)="close()">Close</button>
+  <button mat-flat-button (click)="save()">Save</button>
+</mat-dialog-actions>

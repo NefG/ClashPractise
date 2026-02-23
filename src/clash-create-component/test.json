@@ -1,0 +1,81 @@
+{
+  "name": "Test clash",
+  "keyGroup": [
+    [
+      "Q",
+      "W",
+      "E",
+      "R",
+      "A",
+      "S",
+      "D",
+      "F"
+    ]
+  ],
+  "sequence": [
+    {
+      "type": "random",
+      "delay": 200,
+      "positionX": -200,
+      "positionY": 0,
+      "keyGroupIndex": 0
+    },
+    {
+      "type": "random",
+      "delay": 500,
+      "positionX": 200,
+      "positionY": 0,
+      "keyGroupIndex": 0
+    },
+    {
+      "type": "random",
+      "delay": 700,
+      "positionX": 0,
+      "positionY": 0,
+      "keyGroupIndex": 0
+    },
+    {
+      "type": "random",
+      "delay": 500,
+      "positionX": 0,
+      "positionY": -200,
+      "keyGroupIndex": 0
+    },
+    {
+      "type": "random",
+      "delay": 500,
+      "positionX": 0,
+      "positionY": 200,
+      "keyGroupIndex": 0
+    },
+    {
+      "type": "static",
+      "key": "Q",
+      "delay": 500,
+      "positionX": -100,
+      "positionY": 200
+    },
+    {
+      "type": "static",
+      "key": "Q",
+      "delay": 500,
+      "positionX": 100,
+      "positionY": 200
+    },
+    {
+      "type": "static",
+      "key": "Q",
+      "delay": 500,
+      "positionX": -200,
+      "positionY": 200
+    },
+    {
+      "type": "static",
+      "key": "Q",
+      "delay": 500,
+      "positionX": 200,
+      "positionY": 200
+    }
+  ],
+  "speed": 800
+}

@@ -1,5 +1,6 @@
 export interface ClashModel {
   name: string;
+  speed: number;
   keyGroup?: string[][];
   sequence: ClashKey[];
 }

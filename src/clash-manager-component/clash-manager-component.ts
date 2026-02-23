@@ -1,6 +1,8 @@
 import {Component, HostListener, Input, ViewChild, ViewContainerRef} from '@angular/core';
 import {ClashCircleComponent} from '../clash-circle-component/clash-circle-component';
 import {ClashKey, ClashModel} from '../model/model';
+import {MatDialog} from '@angular/material/dialog';
+import {ClashCreateComponent} from '../clash-create-component/clash-create-component';
 
 interface SpawnPoint {
   x: number;
@@ -17,20 +19,27 @@ export interface ClashResult {
   imports: [],
   templateUrl: './clash-manager-component.html',
   styleUrl: './clash-manager-component.css',
+  host: {
+    'tabindex': '0', // Makes the component focusable in the tab order
+    'style': 'display: block;' // Ensures the host has a physical area to click
+  },
 })
 export class ClashManagerComponent {
   @ViewChild('spawn', { read: ViewContainerRef, static: true })
   public spawn!: ViewContainerRef;
+  @ViewChild('clashStage', { read: ViewContainerRef, static: true })
+  public clashStage!: ViewContainerRef;
   @Input()
   public clash!:ClashModel;
 
   private circles: ClashCircleComponent[] = [];
   private backUpKeyGroup = ['Q', 'W', 'E', 'R', 'A', 'S', 'D', 'F'];
-  private speed: number = 1000;
   private cleanUp: boolean = false;
   private cleanUpDelay: number = 2000;
 
-  @HostListener('window:keydown.space', ['$event'])
+  public constructor() {}
+
+  @HostListener('keydown.space', ['$event'])
   protected start(event: Event) {
     this.spawn.clear();
     this.circles = [];
@@ -56,7 +65,7 @@ export class ClashManagerComponent {
       ref.instance.x = clashKey.positionX;
       ref.instance.y = clashKey.positionY;
 
-      ref.instance.startCollapse(this.speed);
+      ref.instance.startCollapse(this.clash.speed);
       this.circles.push(ref.instance);
 
       // timeout fail
@@ -65,11 +74,11 @@ export class ClashManagerComponent {
           ref.instance.resolve({ text: 'Bad', type: 'fail-red'});
           this.cleanup(ref.instance);
         }
-      }, this.speed);
+      }, this.clash.speed);
     }, delay);
   }
 
-  @HostListener('window:keydown', ['$event'])
+  @HostListener('keydown', ['$event'])
   protected onKey(e: KeyboardEvent) {
     const circle = this.circles.find(c => !c.resolved);
     if (!circle) return;

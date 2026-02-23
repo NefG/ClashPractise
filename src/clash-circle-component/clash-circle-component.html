@@ -1,7 +1,7 @@
 <div
   class="clash-circle"
-  [style.left.px]="x"
-  [style.top.px]="y"
+  [style.left]="'calc(50% + ' + x + 'px)'"
+  [style.top]="'calc(50% + ' + y + 'px)'"
   [style.--progress]="progress"
   [ngClass]="{
        'success-perfect': resultClass === 'success-perfect',

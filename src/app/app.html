@@ -1,4 +1,4 @@
-<app-clash-manager-component [clash]="clashSelect"></app-clash-manager-component>
+<app-clash-manager-component [clash]="clashSelect" #clashManager></app-clash-manager-component>
 <div class="floating-toolbar">
   <mat-form-field>
     <mat-label>Clash select</mat-label>
@@ -9,10 +9,10 @@
     </mat-select>
   </mat-form-field>
   <span class="spacer"></span>
-  <button matMiniFab (click)="clear()">
+  <button matMiniFab (click)="clashManagement()" appBlurOnClick>
     <mat-icon>add_box</mat-icon>
   </button>
-  <button matMiniFab aria-label="Example icon button with a menu icon">
+  <button matMiniFab tabindex="-1" appBlurOnClick>
     <mat-icon>settings</mat-icon>
   </button>
 </div>

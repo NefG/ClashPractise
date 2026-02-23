@@ -15,6 +15,7 @@
 
   width: calc(var(--outer-radius-start) * 2);
   height: calc(var(--outer-radius-start) * 2);
+  transform: translate(-50%, -50%);
 }
 
 .clash-circle::after {
