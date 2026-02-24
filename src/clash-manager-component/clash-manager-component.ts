@@ -42,6 +42,8 @@ export class ClashManagerComponent {
 
   private spawnerList: number[] = [];
   private score:number = 100;
+  private gapSum:number = 0;
+  private gapCount: number = 0;
   private circleScore:number = 0;
 
   @Output()
@@ -50,6 +52,7 @@ export class ClashManagerComponent {
   public constructor(private soundService: SoundService) {}
 
   public showScore = (): void => {
+    if (this.gapCount > 0) this.score -= this.gapSum / this.gapCount;
     this.setScore.emit(this.score);
   }
 
@@ -61,6 +64,8 @@ export class ClashManagerComponent {
     });
     this.spawnerList = [];
     this.score = 100;
+    this.gapSum = 0;
+    this.gapCount = 0;
     this.setScore.emit(undefined);
     this.circleScore = 100 / this.clash.sequence.length;
     this.circles = [];
@@ -121,10 +126,12 @@ export class ClashManagerComponent {
     const gap = Math.abs(circle.getGap());
     if (gap <= this.clashSettings.perfectMargin) {
       circle.resolve({ text: 'Perfect', type: 'success-perfect'});
-      this.score -= gap;
+      this.gapSum += gap;
+      this.gapCount++;
     } else if (gap <= this.clashSettings.goodMargin) {
       circle.resolve({ text: 'Good', type: 'success-good'});
-      this.score -= gap;
+      this.gapSum += gap;
+      this.gapCount++;
     } else {
       circle.resolve({ text: 'Bad', type: 'fail-red'});
       this.score -= this.circleScore;

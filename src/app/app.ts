@@ -32,7 +32,6 @@ export class App {
   public score:number | undefined;
   public setScore(score:number) {
     this.score = score;
-    console.log(score);
   }
 
   protected clashSettings: ClashSettings = {
