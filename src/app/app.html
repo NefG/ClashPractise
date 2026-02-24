@@ -1,11 +1,17 @@
-<app-clash-manager-component [clash]="clashSelect" #clashManager></app-clash-manager-component>
+<app-clash-manager-component [clashSettings]="clashSettings" [clash]="clashSelect" #clashManager (setScore)="setScore($event)"></app-clash-manager-component>
 <div class="floating-tooltip">
   Press <b>SPACE</b> to start
 </div>
+@if (this.score) {
+  <div class="floating-score">
+    <div class="score-label">Score</div>
+    <div class="score-value">{{ this.score | number : '1.2-2' }}</div>
+  </div>
+}
 <div class="floating-toolbar">
   <mat-form-field>
     <mat-label>Clash select</mat-label>
-    <mat-select [(ngModel)]="clashSelect">
+    <mat-select [(ngModel)]="clashSelect" appBlurOnClick>
       @for (clash of clashSelectList; track clash.name) {
         <mat-option [value]="clash">{{clash.name}}</mat-option>
       }
@@ -15,7 +21,7 @@
   <button matMiniFab (click)="clashManagement()" appBlurOnClick>
     <mat-icon>add_box</mat-icon>
   </button>
-  <button matMiniFab tabindex="-1" appBlurOnClick>
+  <button matMiniFab (click)="openClashSettings()" appBlurOnClick>
     <mat-icon>settings</mat-icon>
   </button>
 </div>

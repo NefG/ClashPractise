@@ -1,11 +1,10 @@
 import {ChangeDetectorRef, Component, Input} from '@angular/core';
-import {NgClass, UpperCasePipe} from '@angular/common';
+import {NgClass} from '@angular/common';
 import {ClashResult} from '../clash-manager-component/clash-manager-component';
 
 @Component({
   selector: 'app-clash-circle-component',
   imports: [
-    UpperCasePipe,
     NgClass
   ],
   templateUrl: './clash-circle-component.html',
@@ -15,6 +14,9 @@ export class ClashCircleComponent {
   @Input() letter!: string;
   @Input() x = 0;
   @Input() y = 0;
+
+  @Input() outerThickness = 2;
+  @Input() innerThickness = 8;
 
   progress = 0;
   resolved = false;

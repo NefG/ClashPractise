@@ -23,7 +23,6 @@ import {JsonPipe} from '@angular/common';
     MatDialogContent,
     MatDialogActions,
     CdkCopyToClipboard,
-    JsonPipe
   ],
   templateUrl: './clash-create-component.html',
   styleUrl: './clash-create-component.css',
@@ -65,6 +64,10 @@ export class ClashCreateComponent {
       } catch (e) {
         return false;
       }
+    }
+
+    public stringifySelected() {
+      return JSON.stringify(this.clashSelected);
     }
 
     public swapToJSON() {

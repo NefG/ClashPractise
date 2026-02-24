@@ -10,7 +10,7 @@
     </mat-form-field>
     <button mat-flat-button (click)="deleteCurrent()">Delete</button>
     <button mat-flat-button (click)="swapToJSON()" [disabled]="fromJSON">Enter JSON</button>
-    <button mat-flat-button [cdkCopyToClipboard]="clashSelected | json">Copy Clash JSON</button>
+    <button mat-flat-button [cdkCopyToClipboard]="stringifySelected()">Copy Clash JSON</button>
   </div>
 
   <div style="width: 100%; height: 64px;"> </div>

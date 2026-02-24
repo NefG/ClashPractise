@@ -20,3 +20,25 @@
 .floating-toolbar span.spacer {
   width: 16px;
 }
+
+.floating-score {
+  position: fixed;
+  top: 32px; left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.floating-score > .score-label {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.floating-score > .score-value {
+  font-weight: bold;
+  font-size: 32px;
+}

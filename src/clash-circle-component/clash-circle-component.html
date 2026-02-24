@@ -2,6 +2,8 @@
   class="clash-circle"
   [style.left]="'calc(50% + ' + x + 'px)'"
   [style.top]="'calc(50% + ' + y + 'px)'"
+  [style.--inner-thickness]="innerThickness+'px'"
+  [style.--outer-thickness]="outerThickness+'px'"
   [style.--progress]="progress"
   [ngClass]="{
        'success-perfect': resultClass === 'success-perfect',

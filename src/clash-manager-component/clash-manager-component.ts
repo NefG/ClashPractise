@@ -1,6 +1,6 @@
-import {Component, HostListener, Input, ViewChild, ViewContainerRef} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, Output, ViewChild, ViewContainerRef} from '@angular/core';
 import {ClashCircleComponent} from '../clash-circle-component/clash-circle-component';
-import {ClashKey, ClashModel} from '../model/model';
+import {ClashKey, ClashModel, ClashSettings} from '../model/model';
 import {MatDialog} from '@angular/material/dialog';
 import {ClashCreateComponent} from '../clash-create-component/clash-create-component';
 import {SoundService} from '../sound-service';
@@ -31,6 +31,8 @@ export class ClashManagerComponent {
   @ViewChild('clashStage', { read: ViewContainerRef, static: true })
   public clashStage!: ViewContainerRef;
   @Input()
+  public clashSettings!: ClashSettings;
+  @Input()
   public clash!:ClashModel;
 
   private circles: ClashCircleComponent[] = [];
@@ -38,21 +40,40 @@ export class ClashManagerComponent {
   private cleanUp: boolean = false;
   private cleanUpDelay: number = 2000;
 
+  private spawnerList: number[] = [];
+  private score:number = 100;
+  private circleScore:number = 0;
+
+  @Output()
+  public setScore:EventEmitter<number> = new EventEmitter<number>();
+
   public constructor(private soundService: SoundService) {}
+
+  public showScore = (): void => {
+    this.setScore.emit(this.score);
+  }
 
   @HostListener('keydown.space', ['$event'])
   protected start(event: Event) {
     this.spawn.clear();
+    this.spawnerList.forEach(id => {
+      clearTimeout(id);
+    });
+    this.spawnerList = [];
+    this.score = 100;
+    this.setScore.emit(undefined);
+    this.circleScore = 100 / this.clash.sequence.length;
     this.circles = [];
     let delay: number = 0;
-    for (const key of this.clash.sequence) {
+    for (const [index, key] of this.clash.sequence.entries()) {
       delay += key.delay;
-      this.spawnCircle(key, delay);
+      if (index == this.clash.sequence.length - 1) this.spawnCircle(key, delay, this.showScore);
+      else this.spawnCircle(key, delay);
     }
   }
 
-  private spawnCircle(clashKey: ClashKey, delay: number) {
-    setTimeout(() => {
+  private spawnCircle(clashKey: ClashKey, delay: number, forLast = ()=> {}) {
+    const id = setTimeout(() => {
       const ref = this.spawn.createComponent(ClashCircleComponent);
       let letter:string = 'Q';
       if (clashKey.type === 'static') {
@@ -65,6 +86,8 @@ export class ClashManagerComponent {
       ref.instance.letter = letter;
       ref.instance.x = clashKey.positionX;
       ref.instance.y = clashKey.positionY;
+      ref.instance.outerThickness = this.clashSettings.perfectMargin;
+      ref.instance.innerThickness = this.clashSettings.goodMargin;
 
       ref.instance.startCollapse(this.clash.speed);
       this.circles.push(ref.instance);
@@ -74,9 +97,12 @@ export class ClashManagerComponent {
         if (!ref.instance.resolved) {
           ref.instance.resolve({ text: 'Bad', type: 'fail-red'});
           this.cleanup(ref.instance);
+          this.score -= this.circleScore;
         }
+        forLast();
       }, this.clash.speed);
     }, delay);
+    this.spawnerList.push(id);
   }
 
   @HostListener('keydown', ['$event'])
@@ -88,16 +114,20 @@ export class ClashManagerComponent {
     if (e.key.toUpperCase() !== circle.letter) {
       circle.resolve({ text: 'Bad', type: 'fail-red'});
       this.cleanup(circle)
+      this.score -= this.circleScore;
       return;
     }
 
     const gap = Math.abs(circle.getGap());
-    if (gap <= 2) {
+    if (gap <= this.clashSettings.perfectMargin) {
       circle.resolve({ text: 'Perfect', type: 'success-perfect'});
-    } else if (gap <= 8) {
+      this.score -= gap;
+    } else if (gap <= this.clashSettings.goodMargin) {
       circle.resolve({ text: 'Good', type: 'success-good'});
+      this.score -= gap;
     } else {
       circle.resolve({ text: 'Bad', type: 'fail-red'});
+      this.score -= this.circleScore;
     }
 
     this.cleanup(circle);

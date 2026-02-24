@@ -21,5 +21,6 @@ export interface ClashResult {
 }
 
 export interface ClashSettings {
-
+  perfectMargin:number;
+  goodMargin:number;
 }
